@@ -526,8 +526,25 @@
                 border-radius: 3px;
             }
             
-            .results-table::-webkit-scrollbar-thumb:hover {
-                background: rgba(212, 175, 55, 0.7);
+            /* LINE 內建瀏覽器額外優化 */
+            .results-table.line-browser {
+                /* 嘗試強制啟用 LINE 內建瀏覽器滑動 */
+                overflow-x: scroll !important;
+                overflow-y: visible !important;
+                -webkit-overflow-scrolling: touch !important;
+                transform: translateZ(0); /* 硬體加速 */
+                will-change: transform;
+                /* 更明顯的滾動條 */
+                scrollbar-width: thick;
+            }
+            
+            .results-table.line-browser::-webkit-scrollbar {
+                height: 12px !important;
+            }
+            
+            .results-table.line-browser::-webkit-scrollbar-thumb {
+                background: #d4af37 !important;
+                border-radius: 6px !important;
             }
             
             table {
@@ -1021,8 +1038,13 @@
             // 顯示的資料（前50筆或全部）
             const displayData = results.slice(0, currentDisplayCount);
             
+            // 檢測是否為 LINE 瀏覽器
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isLineInApp = userAgent.includes('Line') || userAgent.includes('NAVER');
+            const lineBrowserClass = isLineInApp ? 'line-browser' : '';
+            
             let tableHTML = `
-                <div class="results-table metallic-element">
+                <div class="results-table metallic-element ${lineBrowserClass}">
                     <div class="metallic-shimmer"></div>
                     <table>
                         <thead>
@@ -1137,7 +1159,7 @@
                     return `
                         <th>姓名</th>
                         <th>LINE ID</th>
-                        <th>註冊頻道</th>
+                        <th>註冊平台</th>
                         <th>連絡電話</th>
                         <th>所在縣市</th>
                         <th>註冊日期</th>
@@ -1147,7 +1169,7 @@
                         <th>用戶名稱</th>
                         <th>LINE ID</th>
                         <th>總登入次數</th>
-                        <th>各頻道登入次數</th>
+                        <th>各平台登入次數</th>
                     `;
                 default:
                     return '<th>資料</th>';
@@ -1249,7 +1271,7 @@
 
                 return `
                     <div class="channel-stats">
-                        <h3>📊 頻道註冊統計</h3>
+                        <h3>📊 平台註冊統計</h3>
                         <div class="stats-grid">
                             <div class="stat-card gold-stat-card-1 metallic-element">
                                 <div class="metallic-shimmer"></div>
@@ -1329,7 +1351,7 @@
 
                 return `
                     <div class="channel-stats">
-                        <h3>📊 頻道登入統計</h3>
+                        <h3>📊 平台登入統計</h3>
                         <div class="stats-grid">
                             ${totalCard}
                             ${channelCards}
