@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公益家具再利用平台 - 資料查詢系統</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #d4af37;
+            --primary-dark: #b8860b;
+            --primary-light: #f5e7c1;
+            --accent-color: #c0a060;
+            --bg-color: #ffffff;
+            --text-color: #333;
+            --border-radius: 16px;
+            --shadow: 0 8px 20px rgba(212, 175, 55, 0.1);
+            --metallic-gradient: linear-gradient(135deg, #f5e7c1 0%, #d4af37 50%, #f5e7c1 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            background-image: 
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 40px 0;
+            background: var(--metallic-gradient);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 5s infinite;
+            transform: skewX(-20deg);
+            z-index: 1;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .search-panel {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #fff;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        
+        .search-btn {
+            background: var(--metallic-gradient);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25);
+        }
+        
+        .search-btn:active {
+            transform: translateY(1px);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f9f7f2 100%);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0) 100%);
+            z-index: 1;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+        
+        .stat-card h3 {
+            font-size: 1rem;
+            color: #4b5563;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .results-table {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: var(--metallic-gradient);
+            color: white;
+            position: relative;
+        }
+        
+        th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        th:first-child { border-top-left-radius: var(--border-radius); }
+        th:last-child { border-top-right-radius: var(--border-radius); }
+        
+        tbody tr:last-child td:first-child { border-bottom-left-radius: var(--border-radius); }
+        tbody tr:last-child td:last-child { border-bottom-right-radius: var(--border-radius); }
+        
+        td {
+            padding: 16px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            transition: background 0.3s ease;
+        }
+        
+        tbody tr:hover td {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-listed {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #0d47a1;
+            border: 1px solid rgba(13, 71, 161, 0.1);
+        }
+        
+        .status-closed {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #1b5e20;
+            border: 1px solid rgba(27, 94, 32, 0.1);
+        }
+        
+        .status-reserved {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            color: #ff6f00;
+            border: 1px solid rgba(255, 111, 0, 0.1);
+        }
+        
+        .status-registered {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #6a1b9a;
+            border: 1px solid rgba(106, 27, 154, 0.1);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+            background: linear-gradient(to right, var(--primary-dark), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid #fecaca;
+        }
+        
+        .connection-status {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+        }
+        
+        .status-connected {
+            color: #059669;
+        }
+        
+        .status-error {
+            color: #dc2626;
+        }
+        
+        .channel-stats {
+            margin-top: 40px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .channel-stats h3 {
+            color: #374151;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-align: left;
+        }
+        
+        .channel-stats .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 0;
+        }
+        
+        .channel-stats .stat-card {
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .channel-stats .stat-number {
+            font-size: 2rem;
+        }
+        
+        .gold-stat-card-1 {
+            background: linear-gradient(135deg, #f5e7c1 0%, #d4af37 100%);
+            color: #5d4037;
+        }
+        
+        .gold-stat-card-2 {
+            background: linear-gradient(135deg, #e6d7b9 0%, #c0a060 100%);
+            color: #5d4037;
+        }
+        
+        .gold-stat-card-3 {
+            background: linear-gradient(135deg, #d4c19a 0%, #b8860b 100%);
+            color: #fff;
+        }
+        
+        .gold-text {
+            background: linear-gradient(to right, #5d4037, #8d6e63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .white-text {
+            -webkit-text-fill-color: white;
+        }
+        
+        .metallic-element {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metallic-shimmer {
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 5s infinite;
+            transform: skewX(-20deg);
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header metallic-element">
+            <div class="metallic-shimmer"></div>
+            <h1>🏡 公益家具再利用平台</h1>
+            <p>查詢家具上架、結案、預約、註冊及登入記錄</p>
+        </div>
+
+        <!-- 連接狀態顯示 -->
+        <div class="connection-status" id="connectionStatus">
+            <div class="loading-spinner" style="width: 20px; height: 20px;"></div>
+            正在連接資料庫...
+        </div>
+
+        <div class="search-panel metallic-element">
+            <div class="metallic-shimmer"></div>
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="startDate">起始日期</label>
+                        <input type="date" id="startDate" name="startDate" value="2025-05-01">
+                    </div>
+                    <div class="form-col">
+                        <label for="endDate">結束日期</label>
+                        <input type="date" id="endDate" name="endDate" value="2025-06-30">
+                    </div>
+                    <div class="form-col">
+                        <label for="queryType">查詢類型</label>
+                        <select id="queryType" name="queryType">
+                            <option value="">請選擇查詢類型</option>
+                            <option value="listed">上架</option>
+                            <option value="closed">結案</option>
+                            <option value="reserved">預約</option>
+                            <option value="registered">註冊</option>
+                            <option value="login">登入次數</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <button class="search-btn metallic-element" onclick="performSearch()" id="searchBtn">
+                            <div class="metallic-shimmer"></div>
+                            🔍 查詢
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-section metallic-element">
+            <div class="metallic-shimmer"></div>
+            <div class="stats-grid" id="statsGrid" style="display: none;">
+                <div class="stat-card metallic-element">
+                    <div class="metallic-shimmer"></div>
+                    <h3>查詢結果</h3>
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div>筆資料</div>
+                </div>
+                <div class="stat-card metallic-element">
+                    <div class="metallic-shimmer"></div>
+                    <h3>查詢範圍</h3>
+                    <div class="stat-number" id="dateRange">-</div>
+                    <div>天</div>
+                </div>
+                <div class="stat-card metallic-element">
+                    <div class="metallic-shimmer"></div>
+                    <h3>查詢類型</h3>
+                    <div class="stat-number" id="queryTypeDisplay">-</div>
+                    <div>項目</div>
+                </div>
+            </div>
+
+            <div id="resultsContainer">
+                <div class="no-results">
+                    <div class="no-results-icon">📊</div>
+                    <h3>請選擇查詢條件開始搜尋</h3>
+                    <p>設定日期範圍和查詢類型後，點擊查詢按鈕</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Google Sheets 設定 - 寫死在程式碼中
+        const SHEETS_CONFIG = {
+            apiKey: 'AIzaSyC9uUcEs5_JIgsP_j6XQEhCuLUm_oqLqtw',
+            
+            // 試算表1 - 用戶相關資料
+            userSpreadsheetId: '1sOgdXH2fjVPPpbEWkb7HIOX7rKMJeZyMpwbPWMBllCc',
+            sheets: {
+                suppliers: '家具供應者資料表',      // ID: 657953189
+                users: '使用者資料表',             // ID: 598580565  
+                admins: '管理者資料表',            // ID: 815365146
+                loginRecords: '使用紀錄'           // ID: 1086164868
+            },
+            
+            // 試算表2 - 家具相關資料
+            furnitureSpreadsheetId: '1fzBGMAMXK8vDHK0V_s94Rn-rLFxNDcTqnFdV2vC8V5s',
+            furnitureSheets: {
+                furniture: '家具資料總表',         // ID: 1638708033
+                reservations: '家具預約登記表'     // ID: 283536914
+            }
+        };
+
+        let isConnected = false;
+
+        // Google Sheets API 功能
+        async function fetchSheetData(spreadsheetId, sheetName) {
+            const range = `${sheetName}!A:AZ`;  // 擴展到AZ欄以包含AD欄
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=${SHEETS_CONFIG.apiKey}`;
+            
+            console.log('請求 URL:', url);
+            
+            try {
+                const response = await fetch(url);
+                console.log('回應狀態:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('錯誤回應:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log('取得資料:', data);
+                return data.values || [];
+            } catch (error) {
+                console.error('獲取 Google Sheets 資料失敗:', error);
+                throw error;
+            }
+        }
+
+        function arrayToObjects(data) {
+            if (!data || data.length < 2) return [];
+            
+            const headers = data[0];
+            return data.slice(1).map(row => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index] || '';
+                });
+                return obj;
+            });
+        }
+
+        async function getAllSheetsData() {
+            try {
+                // 獲取用戶相關資料
+                const [suppliersData, usersData, adminsData, loginData] = await Promise.all([
+                    fetchSheetData(SHEETS_CONFIG.userSpreadsheetId, SHEETS_CONFIG.sheets.suppliers),
+                    fetchSheetData(SHEETS_CONFIG.userSpreadsheetId, SHEETS_CONFIG.sheets.users),
+                    fetchSheetData(SHEETS_CONFIG.userSpreadsheetId, SHEETS_CONFIG.sheets.admins),
+                    fetchSheetData(SHEETS_CONFIG.userSpreadsheetId, SHEETS_CONFIG.sheets.loginRecords)
+                ]);
+
+                // 獲取家具相關資料
+                const [furnitureData, reservationData] = await Promise.all([
+                    fetchSheetData(SHEETS_CONFIG.furnitureSpreadsheetId, SHEETS_CONFIG.furnitureSheets.furniture),
+                    fetchSheetData(SHEETS_CONFIG.furnitureSpreadsheetId, SHEETS_CONFIG.furnitureSheets.reservations)
+                ]);
+
+                return {
+                    suppliers: arrayToObjects(suppliersData),
+                    users: arrayToObjects(usersData),
+                    admins: arrayToObjects(adminsData),
+                    loginRecords: arrayToObjects(loginData),
+                    furniture: arrayToObjects(furnitureData),
+                    reservations: arrayToObjects(reservationData)
+                };
+            } catch (error) {
+                console.error('獲取資料失敗:', error);
+                throw error;
+            }
+        }
+
+        async function testConnection() {
+            try {
+                console.log('開始測試連接...');
+                const testData = await fetchSheetData(SHEETS_CONFIG.userSpreadsheetId, SHEETS_CONFIG.sheets.suppliers);
+                console.log('測試資料:', testData);
+                
+                if (testData && testData.length > 0) {
+                    isConnected = true;
+                    updateConnectionStatus('✅ 資料庫連接成功', 'status-connected');
+                    return true;
+                } else {
+                    isConnected = false;
+                    updateConnectionStatus('❌ 資料庫連接失敗：無法取得資料', 'status-error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('連接測試失敗:', error);
+                isConnected = false;
+                updateConnectionStatus('❌ 資料庫連接失敗: ' + error.message, 'status-error');
+                return false;
+            }
+        }
+
+        function updateConnectionStatus(message, className) {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.innerHTML = `<div class="${className}">${message}</div>`;
+        }
+
+        function normalizeDate(dateStr) {
+            if (!dateStr) return null;
+            return dateStr.replace(/\//g, '-');
+        }
+
+        function isDateInRange(dateStr, startDate, endDate) {
+            if (!dateStr) return false;
+            
+            const normalizedDate = normalizeDate(dateStr);
+            const date = new Date(normalizedDate);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            return date >= start && date <= end;
+        }
+
+        async function performSearch() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const queryType = document.getElementById('queryType').value;
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!startDate || !endDate || !queryType) {
+                showError('請填寫完整的查詢條件');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                showError('起始日期不能晚於結束日期');
+                return;
+            }
+
+            if (!isConnected) {
+                showError('無法連接到資料庫，請檢查網路連接');
+                return;
+            }
+
+            searchBtn.disabled = true;
+            showLoading();
+            
+            try {
+                const data = await getAllSheetsData();
+                const results = getSearchResults(data, startDate, endDate, queryType);
+                displayResults(results, startDate, endDate, queryType);
+            } catch (error) {
+                showError(`查詢失敗: ${error.message}`);
+            } finally {
+                searchBtn.disabled = false;
+            }
+        }
+
+        function getSearchResults(data, startDate, endDate, queryType) {
+            let results = [];
+
+            switch (queryType) {
+                case 'listed':
+                    // 家具上架查詢 - 使用 P欄：上架時間
+                    results = data.furniture.filter(item => {
+                        const listedDate = getColumnValue(item, 'P', '上架時間');
+                        return isDateInRange(listedDate, startDate, endDate);
+                    }).map(item => ({
+                        furnitureCode: getColumnValue(item, 'G', '家具編號'),
+                        furnitureName: getColumnValue(item, 'H', '家具名稱'),
+                        uploader: getColumnValue(item, 'B', '上傳人姓名'),
+                        company: getColumnValue(item, 'E', '公司名稱'),
+                        listedDate: getColumnValue(item, 'P', '上架時間'),
+                        status: getColumnValue(item, 'S', '狀態'),
+                        type: '上架'
+                    }));
+                    break;
+
+                case 'closed':
+                    // 家具結案查詢 - 使用 AD欄：結案日期
+                    results = data.furniture.filter(item => {
+                        console.log('完整的家具資料項目:', item); // 顯示整筆資料
+                        console.log('所有可用的欄位:', Object.keys(item)); // 顯示所有欄位名稱
+                        
+                        const closedDate = getColumnValue(item, 'AD', '結案日期');
+                        console.log('檢查結案資料 - 家具編號:', getColumnValue(item, 'G', '家具編號')); 
+                        console.log('結案日期 (AD欄):', closedDate); 
+                        console.log('日期範圍檢查:', isDateInRange(closedDate, startDate, endDate)); 
+                        return closedDate && isDateInRange(closedDate, startDate, endDate);
+                    }).map(item => ({
+                        furnitureCode: getColumnValue(item, 'G', '家具編號'),
+                        furnitureName: getColumnValue(item, 'H', '家具名稱'),
+                        uploader: getColumnValue(item, 'B', '上傳人姓名'),
+                        closedDate: getColumnValue(item, 'AD', '結案日期'),
+                        status: getColumnValue(item, 'S', '狀態'),
+                        type: '結案'
+                    }));
+                    
+                    console.log('結案查詢結果:', results); 
+                    break;
+
+                case 'reserved':
+                    // 預約查詢 - 使用 L欄：登記預約日期
+                    results = data.reservations.filter(item => {
+                        const reservedDate = getColumnValue(item, 'L', '登記預約日期');
+                        console.log('檢查預約資料:', item); // 偵錯用
+                        console.log('預約日期:', reservedDate); // 偵錯用
+                        console.log('日期範圍檢查:', isDateInRange(reservedDate, startDate, endDate)); // 偵錯用
+                        return isDateInRange(reservedDate, startDate, endDate);
+                    }).map(item => ({
+                        furnitureCode: getColumnValue(item, 'E', '家具編號'),
+                        furnitureName: getColumnValue(item, 'F', '家具名稱'),
+                        uploader: getColumnValue(item, 'B', '上傳人姓名'),
+                        uploaderPhone: getColumnValue(item, 'C', '連絡電話'),
+                        uploaderEmail: getColumnValue(item, 'D', 'E-mail'),
+                        reserver: getColumnValue(item, 'I', '預約人姓名'), // 修正：改為I欄的預約人姓名
+                        reservedDate: getColumnValue(item, 'L', '登記預約日期'),
+                        address: getColumnValue(item, 'G', '家具地址'),
+                        type: '預約'
+                    }));
+                    
+                    console.log('預約查詢結果:', results); // 偵錯用
+                    break;
+
+                case 'registered':
+                    // 註冊查詢 - 合併所有使用者類型
+                    const allUsers = [
+                        ...data.suppliers.map(item => ({
+                            lineId: getColumnValue(item, 'A', 'LINE ID'),
+                            name: getColumnValue(item, 'B', '姓名'),
+                            company: getColumnValue(item, 'C', '公司名稱'),
+                            phone: getColumnValue(item, 'E', '連絡電話'),
+                            email: getColumnValue(item, 'F', 'E-mail'),
+                            location: getColumnValue(item, 'G', '所在縣市'),
+                            registeredDate: getColumnValue(item, 'H', '註冊日期'),
+                            channel: '家具供應者'
+                        })),
+                        ...data.users.map(item => ({
+                            lineId: getColumnValue(item, 'A', 'LINE ID'),
+                            name: getColumnValue(item, 'B', '姓名'),
+                            phone: getColumnValue(item, 'C', '連絡電話'),
+                            email: getColumnValue(item, 'D', 'E-mail'),
+                            location: getColumnValue(item, 'E', '所在縣市'),
+                            registeredDate: getColumnValue(item, 'F', '註冊日期'),
+                            channel: '使用者'
+                        })),
+                        ...data.admins.map(item => ({
+                            lineId: getColumnValue(item, 'A', 'LINE ID'),
+                            name: getColumnValue(item, 'B', '姓名'),
+                            phone: getColumnValue(item, 'C', '連絡電話'),
+                            email: getColumnValue(item, 'D', 'E-mail'),
+                            registeredDate: getColumnValue(item, 'E', '註冊日期'),
+                            channel: '管理者'
+                        }))
+                    ];
+                    
+                    results = allUsers.filter(item => 
+                        isDateInRange(item.registeredDate, startDate, endDate)
+                    ).map(item => ({
+                        ...item,
+                        type: '註冊'
+                    }));
+                    break;
+
+                case 'login':
+                    // 登入次數統計 - 使用 使用紀錄表
+                    const loginCounts = {};
+                    data.loginRecords.forEach(record => {
+                        const loginDate = getColumnValue(record, 'D', '登入日期');
+                        if (isDateInRange(loginDate, startDate, endDate)) {
+                            const userId = getColumnValue(record, 'A', 'LINE ID');
+                            const userName = getColumnValue(record, 'F', '使用者姓名');
+                            const channel = getColumnValue(record, 'B', '登入的LINE@');
+                            
+                            if (!loginCounts[userId]) {
+                                loginCounts[userId] = {
+                                    userId: userId,
+                                    userName: userName,
+                                    channels: {},
+                                    totalCount: 0,
+                                    type: '登入次數'
+                                };
+                            }
+                            
+                            if (!loginCounts[userId].channels[channel]) {
+                                loginCounts[userId].channels[channel] = 0;
+                            }
+                            loginCounts[userId].channels[channel]++;
+                            loginCounts[userId].totalCount++;
+                        }
+                    });
+                    results = Object.values(loginCounts);
+                    break;
+            }
+
+            return results;
+        }
+
+        // 輔助函數：獲取欄位值（支持欄位名稱和索引）
+        function getColumnValue(item, columnIndex, columnName) {
+            // 先嘗試用欄位名稱
+            if (item[columnName] !== undefined && item[columnName] !== '') {
+                return item[columnName];
+            }
+            
+            // 再嘗試用欄位索引
+            if (item[columnIndex] !== undefined && item[columnIndex] !== '') {
+                return item[columnIndex];
+            }
+            
+            // 嘗試根據欄位位置獲取值
+            const keys = Object.keys(item);
+            const columnPosition = columnIndex.charCodeAt(0) - 65; // A=0, B=1, C=2...
+            
+            // 對於雙字母欄位 (如 AD)
+            if (columnIndex.length === 2) {
+                const firstChar = columnIndex.charCodeAt(0) - 65;
+                const secondChar = columnIndex.charCodeAt(1) - 65;
+                const position = (firstChar + 1) * 26 + secondChar; // AD = (0+1)*26 + 3 = 29
+                if (keys[position] && item[keys[position]] !== undefined && item[keys[position]] !== '') {
+                    return item[keys[position]];
+                }
+            } else {
+                // 單字母欄位
+                if (keys[columnPosition] && item[keys[columnPosition]] !== undefined && item[keys[columnPosition]] !== '') {
+                    return item[keys[columnPosition]];
+                }
+            }
+            
+            // 最後返回空字串
+            return '';
+        }
+
+        let currentResults = []; // 儲存完整的查詢結果
+        let displayLimit = 50;   // 預設顯示筆數
+        let currentDisplayCount = 50; // 目前顯示的筆數
+
+        function displayResults(results, startDate, endDate, queryType) {
+            const statsGrid = document.getElementById('statsGrid');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            // 儲存完整結果
+            currentResults = results;
+            currentDisplayCount = Math.min(displayLimit, results.length);
+            
+            document.getElementById('totalCount').textContent = results.length;
+            document.getElementById('dateRange').textContent = calculateDateRange(startDate, endDate);
+            document.getElementById('queryTypeDisplay').textContent = getQueryTypeDisplay(queryType);
+            
+            statsGrid.style.display = 'grid';
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>查無資料</h3>
+                        <p>在指定的日期範圍內沒有找到相關記錄</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 顯示的資料（前50筆或全部）
+            const displayData = results.slice(0, currentDisplayCount);
+            
+            let tableHTML = `
+                <div class="results-table metallic-element">
+                    <div class="metallic-shimmer"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                ${getTableHeaders(queryType)}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${displayData.map(item => getTableRow(item, queryType)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // 如果資料超過目前顯示筆數，加上顯示更多按鈕
+            if (results.length > currentDisplayCount) {
+                tableHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div style="color: #6b7280; margin-bottom: 15px; font-size: 0.95rem;">
+                            顯示 ${currentDisplayCount} 筆，共 ${results.length} 筆資料
+                        </div>
+                        <button class="search-btn metallic-element" onclick="showMoreResults('${queryType}')" style="width: auto; padding: 12px 30px;">
+                            <div class="metallic-shimmer"></div>
+                            📄 顯示更多 (還有 ${results.length - currentDisplayCount} 筆)
+                        </button>
+                    </div>
+                `;
+            } else if (results.length > displayLimit) {
+                // 如果已經顯示全部，顯示總筆數
+                tableHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div style="color: #6b7280; font-size: 0.95rem;">
+                            已顯示全部 ${results.length} 筆資料
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (queryType === 'registered' || queryType === 'login') {
+                tableHTML += getChannelStatistics(results, queryType);
+            }
+
+            resultsContainer.innerHTML = tableHTML;
+            addShimmerToElements();
+        }
+
+        function showMoreResults(queryType) {
+            // 增加顯示筆數
+            currentDisplayCount = Math.min(currentDisplayCount + 50, currentResults.length);
+            
+            // 重新顯示結果
+            const displayData = currentResults.slice(0, currentDisplayCount);
+            
+            // 只更新表格內容，不重新產生整個結果區域
+            const tableBody = document.querySelector('.results-table tbody');
+            tableBody.innerHTML = displayData.map(item => getTableRow(item, queryType)).join('');
+            
+            // 更新或移除顯示更多按鈕
+            const showMoreContainer = document.querySelector('.results-section').lastElementChild;
+            if (showMoreContainer && showMoreContainer.style && showMoreContainer.style.textAlign === 'center') {
+                if (currentResults.length > currentDisplayCount) {
+                    showMoreContainer.innerHTML = `
+                        <div style="color: #6b7280; margin-bottom: 15px; font-size: 0.95rem;">
+                            顯示 ${currentDisplayCount} 筆，共 ${currentResults.length} 筆資料
+                        </div>
+                        <button class="search-btn metallic-element" onclick="showMoreResults('${queryType}')" style="width: auto; padding: 12px 30px;">
+                            <div class="metallic-shimmer"></div>
+                            📄 顯示更多 (還有 ${currentResults.length - currentDisplayCount} 筆)
+                        </button>
+                    `;
+                } else {
+                    showMoreContainer.innerHTML = `
+                        <div style="color: #6b7280; font-size: 0.95rem;">
+                            已顯示全部 ${currentResults.length} 筆資料
+                        </div>
+                    `;
+                }
+                
+                // 重新添加金屬光澤效果
+                addShimmerToElements();
+            }
+        }
+
+        function getTableHeaders(queryType) {
+            switch (queryType) {
+                case 'listed':
+                    return `
+                        <th>家具編號</th>
+                        <th>家具名稱</th>
+                        <th>上傳人</th>
+                        <th>公司名稱</th>
+                        <th>上架時間</th>
+                        <th>狀態</th>
+                    `;
+                case 'closed':
+                    return `
+                        <th>家具編號</th>
+                        <th>家具名稱</th>
+                        <th>上傳人</th>
+                        <th>結案日期</th>
+                        <th>狀態</th>
+                    `;
+                case 'reserved':
+                    return `
+                        <th>家具編號</th>
+                        <th>家具名稱</th>
+                        <th>上傳人</th>
+                        <th>預約人姓名</th>
+                        <th>預約日期</th>
+                    `;
+                case 'registered':
+                    return `
+                        <th>姓名</th>
+                        <th>LINE ID</th>
+                        <th>註冊頻道</th>
+                        <th>連絡電話</th>
+                        <th>所在縣市</th>
+                        <th>註冊日期</th>
+                    `;
+                case 'login':
+                    return `
+                        <th>用戶名稱</th>
+                        <th>LINE ID</th>
+                        <th>總登入次數</th>
+                        <th>各頻道登入次數</th>
+                    `;
+                default:
+                    return '<th>資料</th>';
+            }
+        }
+
+        function getTableRow(item, queryType) {
+            const statusClass = getStatusClass(item.status);
+            
+            switch (queryType) {
+                case 'listed':
+                    return `
+                        <tr>
+                            <td>${item.furnitureCode || '-'}</td>
+                            <td>${item.furnitureName || '-'}</td>
+                            <td>${item.uploader || '-'}</td>
+                            <td>${item.company || '-'}</td>
+                            <td>${item.listedDate || '-'}</td>
+                            <td><span class="status-badge ${statusClass}">${item.status || '-'}</span></td>
+                        </tr>
+                    `;
+                case 'closed':
+                    return `
+                        <tr>
+                            <td>${item.furnitureCode || '-'}</td>
+                            <td>${item.furnitureName || '-'}</td>
+                            <td>${item.uploader || '-'}</td>
+                            <td>${item.closedDate || '-'}</td>
+                            <td><span class="status-badge ${statusClass}">${item.status || '-'}</span></td>
+                        </tr>
+                    `;
+                case 'reserved':
+                    return `
+                        <tr>
+                            <td>${item.furnitureCode || '-'}</td>
+                            <td>${item.furnitureName || '-'}</td>
+                            <td>${item.uploader || '-'}</td>
+                            <td>${item.reserver || '-'}</td>
+                            <td>${item.reservedDate || '-'}</td>
+                        </tr>
+                    `;
+                case 'registered':
+                    return `
+                        <tr>
+                            <td>${item.name || '-'}</td>
+                            <td>${item.lineId || '-'}</td>
+                            <td>${item.channel || '-'}</td>
+                            <td>${item.phone || '-'}</td>
+                            <td>${item.location || '-'}</td>
+                            <td>${item.registeredDate || '-'}</td>
+                        </tr>
+                    `;
+                case 'login':
+                    const channelDetails = Object.entries(item.channels)
+                        .map(([channel, count]) => `${channel}: ${count}次`)
+                        .join('<br>');
+                    return `
+                        <tr>
+                            <td>${item.userName || '-'}</td>
+                            <td>${item.userId || '-'}</td>
+                            <td>${item.totalCount} 次</td>
+                            <td>${channelDetails}</td>
+                        </tr>
+                    `;
+                default:
+                    return '<tr><td>未知資料</td></tr>';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case '上架':
+                case '已上架':
+                    return 'status-listed';
+                case '結案':
+                case '已結案':
+                    return 'status-closed';
+                case '預約':
+                case '已預約':
+                    return 'status-reserved';
+                default:
+                    return 'status-listed';
+            }
+        }
+
+        function getChannelStatistics(results, queryType) {
+            if (queryType === 'registered') {
+                const channelCounts = {
+                    '家具供應者': 0,
+                    '使用者': 0,
+                    '管理者': 0
+                };
+
+                results.forEach(item => {
+                    if (channelCounts.hasOwnProperty(item.channel)) {
+                        channelCounts[item.channel]++;
+                    }
+                });
+
+                return `
+                    <div class="channel-stats">
+                        <h3>📊 頻道註冊統計</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card gold-stat-card-1 metallic-element">
+                                <div class="metallic-shimmer"></div>
+                                <h3>家具供應者</h3>
+                                <div class="stat-number gold-text">${channelCounts['家具供應者']}</div>
+                                <div>人註冊</div>
+                            </div>
+                            <div class="stat-card gold-stat-card-2 metallic-element">
+                                <div class="metallic-shimmer"></div>
+                                <h3>使用者</h3>
+                                <div class="stat-number gold-text">${channelCounts['使用者']}</div>
+                                <div>人註冊</div>
+                            </div>
+                            <div class="stat-card gold-stat-card-3 metallic-element">
+                                <div class="metallic-shimmer"></div>
+                                <h3>管理者</h3>
+                                <div class="stat-number white-text">${channelCounts['管理者']}</div>
+                                <div>人註冊</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (queryType === 'login') {
+                const channelCounts = {};
+                let totalLogins = 0;
+                
+                results.forEach(item => {
+                    Object.entries(item.channels).forEach(([channel, count]) => {
+                        if (!channelCounts[channel]) {
+                            channelCounts[channel] = 0;
+                        }
+                        channelCounts[channel] += count;
+                        totalLogins += count;
+                    });
+                });
+
+                // 總計卡片 - 放在最前面，最淺的底色
+                const totalCard = `
+                    <div class="stat-card" style="background: linear-gradient(135deg, #faf8f0 0%, #f5e7c1 100%); color: #5d4037; border: 1px solid rgba(212, 175, 55, 0.3);" class="metallic-element">
+                        <div class="metallic-shimmer"></div>
+                        <h3 style="font-weight: 600;">三平台總計登入次數</h3>
+                        <div class="stat-number" style="-webkit-text-fill-color: #5d4037; font-weight: 700;">${totalLogins}</div>
+                        <div style="font-weight: 500;">次登入</div>
+                    </div>
+                `;
+
+                const channelCards = Object.entries(channelCounts).map(([channel, count], index) => {
+                    // 漸變加深的底色
+                    let cardStyle = '';
+                    let textClass = 'gold-text';
+                    
+                    switch(index) {
+                        case 0:
+                            cardStyle = 'background: linear-gradient(135deg, #f0e6c7 0%, #e6d7b9 100%); color: #5d4037;';
+                            break;
+                        case 1:
+                            cardStyle = 'background: linear-gradient(135deg, #e6d7b9 0%, #d4c19a 100%); color: #5d4037;';
+                            break;
+                        case 2:
+                            cardStyle = 'background: linear-gradient(135deg, #d4c19a 0%, #b8860b 100%); color: #fff;';
+                            textClass = 'white-text';
+                            break;
+                        default:
+                            cardStyle = 'background: linear-gradient(135deg, #b8860b 0%, #9a7009 100%); color: #fff;';
+                            textClass = 'white-text';
+                    }
+                    
+                    return `
+                        <div class="stat-card metallic-element" style="${cardStyle}">
+                            <div class="metallic-shimmer"></div>
+                            <h3>${channel}</h3>
+                            <div class="stat-number ${textClass}">${count}</div>
+                            <div>次登入</div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="channel-stats">
+                        <h3>📊 頻道登入統計</h3>
+                        <div class="stats-grid">
+                            ${totalCard}
+                            ${channelCards}
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        function getQueryTypeDisplay(queryType) {
+            const types = {
+                'listed': '上架',
+                'closed': '結案',
+                'reserved': '預約',
+                'registered': '註冊',
+                'login': '登入'
+            };
+            return types[queryType] || '-';
+        }
+
+        function calculateDateRange(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            return diffDays;
+        }
+
+        function showLoading() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在查詢資料...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="error-message">
+                    <strong>錯誤：</strong> ${message}
+                </div>
+            `;
+        }
+        
+        function addShimmerToElements() {
+            const elements = document.querySelectorAll('.metallic-element');
+            elements.forEach(element => {
+                if (!element.querySelector('.metallic-shimmer')) {
+                    const shimmer = document.createElement('div');
+                    shimmer.className = 'metallic-shimmer';
+                    element.appendChild(shimmer);
+                }
+            });
+        }
+
+        // 初始化
+        window.onload = async function() {
+            console.log('系統載入完成');
+            addShimmerToElements();
+            
+            const shimmers = document.querySelectorAll('.metallic-shimmer');
+            shimmers.forEach((shimmer, index) => {
+                shimmer.style.animationDelay = `${index * 0.5}s`;
+            });
+
+            // 測試 Google Sheets 連接
+            await testConnection();
+        };
+    </script>
+</body>
+</html>
