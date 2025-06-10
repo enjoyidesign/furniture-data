@@ -40,6 +40,8 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            /* 確保容器不限制子元素滑動 */
+            overflow-x: visible;
         }
         
         .header {
@@ -499,8 +501,33 @@
             
             /* 手機版表格優化 */
             .results-table {
-                margin: 0 -10px; /* 稍微突出容器邊界 */
+                margin: 0 -15px; /* 突出容器邊界讓滑動更明顯 */
                 border-radius: 12px;
+                /* 強制啟用滑動 */
+                overflow-x: scroll !important;
+                -webkit-overflow-scrolling: touch !important;
+                /* 顯示滾動條提示 */
+                scrollbar-width: thin;
+                scrollbar-color: #d4af37 transparent;
+            }
+            
+            /* Webkit 瀏覽器滾動條樣式 */
+            .results-table::-webkit-scrollbar {
+                height: 6px;
+            }
+            
+            .results-table::-webkit-scrollbar-track {
+                background: rgba(212, 175, 55, 0.1);
+                border-radius: 3px;
+            }
+            
+            .results-table::-webkit-scrollbar-thumb {
+                background: rgba(212, 175, 55, 0.5);
+                border-radius: 3px;
+            }
+            
+            .results-table::-webkit-scrollbar-thumb:hover {
+                background: rgba(212, 175, 55, 0.7);
             }
             
             table {
