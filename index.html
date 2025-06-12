@@ -662,7 +662,7 @@
     <script>
         // Google Sheets 設定 - 寫死在程式碼中
         const SHEETS_CONFIG = {
-            apiKey: 'AIzaSyAvVL4Dmi64x24XBvKYvaLGc3G6dmXEAqo',
+            apiKey: 'AIzaSyC9uUcEs5_JIgsP_j6XQEhCuLUm_oqLqtw',
             
             // 試算表1 - 用戶相關資料
             userSpreadsheetId: '1sOgdXH2fjVPPpbEWkb7HIOX7rKMJeZyMpwbPWMBllCc',
@@ -1159,7 +1159,7 @@
                     return `
                         <th>姓名</th>
                         <th>LINE ID</th>
-                        <th>註冊平台</th>
+                        <th>註冊頻道</th>
                         <th>連絡電話</th>
                         <th>所在縣市</th>
                         <th>註冊日期</th>
@@ -1169,7 +1169,7 @@
                         <th>用戶名稱</th>
                         <th>LINE ID</th>
                         <th>總登入次數</th>
-                        <th>各平台登入次數</th>
+                        <th>各頻道登入次數</th>
                     `;
                 default:
                     return '<th>資料</th>';
@@ -1259,7 +1259,7 @@
             if (queryType === 'registered') {
                 const channelCounts = {
                     '家具供應者': 0,
-                    '使用者': 0,
+                    '領取者': 0,
                     '管理者': 0
                 };
 
@@ -1271,7 +1271,7 @@
 
                 return `
                     <div class="channel-stats">
-                        <h3>📊 平台註冊統計</h3>
+                        <h3>📊 頻道註冊統計</h3>
                         <div class="stats-grid">
                             <div class="stat-card gold-stat-card-1 metallic-element">
                                 <div class="metallic-shimmer"></div>
@@ -1281,8 +1281,8 @@
                             </div>
                             <div class="stat-card gold-stat-card-2 metallic-element">
                                 <div class="metallic-shimmer"></div>
-                                <h3>使用者</h3>
-                                <div class="stat-number gold-text">${channelCounts['使用者']}</div>
+                                <h3>領取者</h3>
+                                <div class="stat-number gold-text">${channelCounts['領取者']}</div>
                                 <div>人註冊</div>
                             </div>
                             <div class="stat-card gold-stat-card-3 metallic-element">
@@ -1351,7 +1351,7 @@
 
                 return `
                     <div class="channel-stats">
-                        <h3>📊 平台登入統計</h3>
+                        <h3>📊 頻道登入統計</h3>
                         <div class="stats-grid">
                             ${totalCard}
                             ${channelCards}
